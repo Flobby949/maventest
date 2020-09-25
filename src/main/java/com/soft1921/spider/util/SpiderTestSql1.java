@@ -19,10 +19,10 @@ import org.jsoup.select.Elements;
  */
 
 public class SpiderTestSql1 {
-    public static int add(Entity1 entity1){
+    public static int add(DouBanMovieEntity1 douBanMovieEntity1){
         int code = 0;
-        String sql = "insert into movie(title,url,message,mark) values (?,?,?,?)";
-        code = DBUtils.update(sql,entity1.getTitle(),entity1.getUrl(),entity1.getMessage(),entity1.getMark());
+        String sql = "insert into movie(title,picture,description,url,message,mark) values (?,?,?,?,?,?)";
+        code = DBUtils.update(sql, douBanMovieEntity1.getTitle(), douBanMovieEntity1.getPicture(), douBanMovieEntity1.getDescription(), douBanMovieEntity1.getUrl(), douBanMovieEntity1.getMessage(), douBanMovieEntity1.getMark());
         return code;
     }
     public static void main(String[] args) throws Exception {
@@ -51,17 +51,22 @@ public class SpiderTestSql1 {
 
         Document doc = Jsoup.parse(html);
 
-        Elements elements = doc.select("div[class=pl2]");
+        Elements elements = doc.select("tr[class=item]");
         for (Element element : elements) {
-            Entity1 entity = new Entity1();
+            DouBanMovieEntity1 entity = new DouBanMovieEntity1();
 
 
-            String title = element.select("a").text();
-            String url = element.select("a").attr("href");
-            String message = element.select("p[class=pl]").text();
-            String mark = element.select("span[class=rating_nums]").text();
+            String title = element.select("a").attr("title");
+            String picture = element.select("img").attr("src");
+            String description = element.select("div[class=pl2]").select("a").select("span").text();
+            String url = element.select("div[class=pl2]").select("a").attr("href");
+            String message = element.select("div[class=pl2]").select("p[class=pl]").text();
+            String mark = element.select("div [class=star clearfix]").select("span[class=rating_nums]").text();
+
 
             entity.setTitle(title);
+            entity.setPicture(picture);
+            entity.setDescription(description);
             entity.setUrl(url);
             entity.setMessage(message);
             entity.setMark(mark);
